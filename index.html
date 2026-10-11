@@ -1,241 +1,930 @@
+
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dental Clinic Cost Studio</title>
-
 <style>
-
-*{box-sizing:border-box}
-
-body{margin:0;background:#f2f6f9;color:#183344;font-family:Arial,sans-serif}
-
-header{background:#123b52;color:white;padding:22px 16px}
-
-header h1{font-size:23px;margin:0 0 8px}
-
-header p{margin:0;font-size:14px}
-
-main{max-width:900px;margin:auto;padding:14px}
-
-nav{display:flex;gap:7px;overflow:auto;margin:10px 0}
-
-button{border:0;border-radius:8px;padding:11px 14px;background:#e1ebf0;color:#183344;cursor:pointer;font-size:14px}
-
-button.active,.primary{background:#176b87;color:white}
-
-.card{background:white;padding:15px;border-radius:12px;margin:12px 0;border:1px solid #dce6ec}
-
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-
-label{display:block;font-size:13px;margin-bottom:8px}
-
-input,select{display:block;width:100%;padding:11px;margin-top:5px;border:1px solid #cad8e0;border-radius:8px;background:white;font-size:16px}
-
-.item{padding:12px 0;border-bottom:1px solid #e3ebef}
-
-.small{font-size:12px;color:#637984;line-height:1.7}
-
-strong{overflow-wrap:anywhere}
-
-h2{font-size:19px}
-
-h3{font-size:16px}
-
-.stat{padding:12px;border:1px solid #dce6ec;border-radius:9px;margin:5px 0;background:#fff}
-
-.big{font-size:20px;font-weight:bold;margin-top:7px}
-
-.row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-
-@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-
+:root {
+  --bg:#f4f7fb;
+  --panel:#ffffff;
+  --text:#172b4d;
+  --muted:#75839a;
+  --primary:#087e8b;
+  --primary2:#075e68;
+  --border:#e2e9f0;
+  --danger:#d92d45;
+  --success:#16865c;
+  --warning:#b7791f;
+  --shadow:0 5px 22px rgba(25,55,85,.06);
+}
+body.dark {
+  --bg:#101821;
+  --panel:#192633;
+  --text:#eef5fb;
+  --muted:#a6b5c5;
+  --border:#2c3d4c;
+  --shadow:0 5px 22px rgba(0,0,0,.15);
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:.2s;
+}
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+.app {display:flex;min-height:100vh}
+.sidebar {
+  width:245px;
+  background:var(--panel);
+  border-left:1px solid var(--border);
+  padding:22px 15px;
+  position:fixed;
+  top:0;bottom:0;right:0;
+  overflow-y:auto;
+  z-index:10;
+}
+.brand {
+  padding:8px 10px 22px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:16px;
+}
+.brand-mark {
+  display:inline-grid;
+  place-items:center;
+  background:var(--primary);
+  color:white;
+  width:40px;height:40px;
+  border-radius:13px;
+  font-weight:800;
+  margin-left:9px;
+}
+.brand strong {font-size:15px}
+.brand small {display:block;color:var(--muted);margin-top:6px}
+.nav-btn {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  width:100%;
+  padding:12px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  border-radius:10px;
+  text-align:right;
+  margin:3px 0;
+}
+.nav-btn:hover,.nav-btn.active {
+  color:var(--primary);
+  background:rgba(8,126,139,.10);
+}
+.main {
+  margin-right:245px;
+  width:calc(100% - 245px);
+  padding:24px;
+  max-width:1800px;
+}
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:25px;
+  flex-wrap:wrap;
+}
+h1 {font-size:25px;margin:0 0 7px}
+h2 {font-size:18px;margin:0}
+p {line-height:1.7}
+.muted {color:var(--muted)}
+.small {font-size:12px}
+.top-actions {display:flex;gap:8px;flex-wrap:wrap}
+.btn {
+  border:1px solid var(--border);
+  color:var(--text);
+  background:var(--panel);
+  padding:10px 14px;
+  border-radius:9px;
+}
+.btn.primary {background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.danger {color:var(--danger)}
+.btn:hover {filter:brightness(.97)}
+.cards {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  min-width:0;
+}
+.metric-label {color:var(--muted);font-size:13px;margin-bottom:13px}
+.metric {font-size:25px;font-weight:800;overflow-wrap:anywhere}
+.metric-note {font-size:12px;color:var(--muted);margin-top:9px}
+.section {display:none}
+.section.active {display:block}
+.panel {margin-bottom:20px}
+.panel-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
+.form-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.field {display:flex;flex-direction:column;gap:7px;min-width:0}
+.field label {font-size:13px;color:var(--muted)}
+.field input,.field select,.field textarea,
+.search {
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:11px;
+  background:var(--bg);
+  color:var(--text);
+  min-width:0;
+}
+.field textarea {min-height:80px;resize:vertical}
+.form-actions {margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.table-wrap {overflow-x:auto}
+table {border-collapse:collapse;width:100%;min-width:650px}
+th,td {
+  padding:13px 11px;
+  border-bottom:1px solid var(--border);
+  text-align:right;
+  font-size:13px;
+  white-space:nowrap;
+}
+th {color:var(--muted);font-weight:600;background:rgba(120,140,160,.05)}
+.empty {text-align:center;color:var(--muted);padding:30px}
+.tag {
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:7px;
+  background:rgba(8,126,139,.10);
+  color:var(--primary);
+  font-size:12px;
+}
+.tag.danger {background:rgba(217,45,69,.10);color:var(--danger)}
+.tag.success {background:rgba(22,134,92,.10);color:var(--success)}
+.tag.warning {background:rgba(183,121,31,.12);color:var(--warning)}
+.notice {
+  padding:13px 15px;
+  border-radius:10px;
+  background:rgba(8,126,139,.08);
+  border:1px solid var(--border);
+  margin-bottom:15px;
+  line-height:1.7;
+}
+.toolbar {display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.toolbar > * {flex:1;min-width:160px}
+.split {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.footer {text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.mobile-menu {display:none}
+@media(max-width:1100px) {
+  .cards {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .form-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px) {
+  .sidebar {display:none;width:250px;box-shadow:var(--shadow)}
+  .sidebar.open {display:block}
+  .main {margin-right:0;width:100%;padding:16px}
+  .mobile-menu {display:inline-block}
+  .cards {grid-template-columns:1fr 1fr;gap:9px}
+  .card {padding:13px}
+  .metric {font-size:20px}
+  .form-grid,.split {grid-template-columns:1fr}
+  h1 {font-size:21px}
+}
+@media(max-width:390px) {
+  .cards {grid-template-columns:1fr}
+}
 </style>
-
 </head>
-
 <body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">DC</span>
+      <strong>Dental Clinic</strong>
+      <small>Cost Studio · إدارة العيادة</small>
+    </div>
+    <button class="nav-btn active" data-page="dashboard">▦ لوحة التحكم</button>
+    <button class="nav-btn" data-page="materials">▤ الخامات والمشتريات</button>
+    <button class="nav-btn" data-page="expenses">↘ المصروفات</button>
+    <button class="nav-btn" data-page="records">▣ السجلات اليومية</button>
+    <button class="nav-btn" data-page="accounts">◉ الحسابات ووسائل الدفع</button>
+    <button class="nav-btn" data-page="settings">⚙ الإعدادات والنسخ الاحتياطي</button>
+    <div class="footer">Dental Clinic Cost Studio<br>نسخة أولية قابلة للتطوير</div>
+  </aside>
 
-<header>
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="btn mobile-menu" id="menuBtn">☰</button>
+        <div>
+          <h1 id="pageTitle">لوحة التحكم</h1>
+          <div class="muted small" id="todayLabel"></div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="btn" id="themeBtn">☾ الوضع الليلي</button>
+        <button class="btn primary" id="quickExpense">+ مصروف جديد</button>
+      </div>
+    </header>
 
-<h1>Dental Clinic Cost Studio</h1>
+    <section class="section active" id="page-dashboard">
+      <div class="cards">
+        <div class="card">
+          <div class="metric-label">إجمالي الإيرادات المسجلة</div>
+          <div class="metric" id="totalIncome">0 ج.م</div>
+          <div class="metric-note">من سجلات الدخل</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">إجمالي المصروفات المدفوعة</div>
+          <div class="metric" id="totalExpenses">0 ج.م</div>
+          <div class="metric-note">من السجلات المالية</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">صافي الحركة النقدية</div>
+          <div class="metric" id="netCash">0 ج.م</div>
+          <div class="metric-note">الإيرادات ناقص المصروفات</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">الخامات المسجلة</div>
+          <div class="metric" id="materialCount">0</div>
+          <div class="metric-note">عدد الأصناف في المخزون</div>
+        </div>
+      </div>
+      <div class="notice">
+        <strong>تنبيه محاسبي:</strong>
+        تسجيل الفاتورة لا يعني بالضرورة أنها مدفوعة. سجّل حركة الدفع الفعلية
+        ووسيلة الدفع الصحيحة حتى تكون أرصدة الكاش والفيزا وإنستا باي دقيقة.
+      </div>
+      <div class="card panel">
+        <div class="panel-head">
+          <h2>آخر الحركات المالية</h2>
+          <button class="btn" data-goto="records">عرض كل السجلات</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>التاريخ</th><th>النوع</th><th>البيان</th>
+              <th>وسيلة الدفع</th><th>المبلغ</th>
+            </tr></thead>
+            <tbody id="recentTable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="margin-bottom:10px">توزيع الأرصدة حسب وسيلة الدفع</h2>
+        <div id="accountSummary" class="form-grid"></div>
+      </div>
+    </section>
 
-<p>حساب تكلفة العيادة والخامات والأدوات والتعقيم وصافي الربح</p>
+    <section class="section" id="page-materials">
+      <div class="card panel">
+        <div class="panel-head">
+          <h2>إضافة خامة أو تحديث سعرها</h2>
+          <span class="tag">متابعة أسعار الأصناف</span>
+        </div>
+        <div class="notice">
+          مقارنة السعر تكون لنفس الخامة والعلامة التجارية وحجم العبوة،
+          وليس لإجمالي الفاتورة. زيادة 5% أو أكثر تظهر كتنبيه قوي.
+        </div>
+        <form id="materialForm">
+          <input type="hidden" id="materialId">
+          <div class="form-grid">
+            <div class="field"><label>اسم الخامة *</label><input id="mName" required placeholder="مثال: Composite Syringe"></div>
+            <div class="field"><label>العلامة التجارية</label><input id="mBrand" placeholder="اسم الشركة"></div>
+            <div class="field"><label>حجم العبوة / الوحدة</label><input id="mPack" placeholder="مثال: 1 syringe"></div>
+            <div class="field"><label>المورد</label><input id="mSupplier" placeholder="اسم المورد"></div>
+            <div class="field"><label>السعر الحالي بالجنيه *</label><input id="mPrice" type="number" min="0" step="0.01" required></div>
+            <div class="field"><label>تاريخ الشراء</label><input id="mDate" type="date"></div>
+            <div class="field"><label>رقم الفاتورة</label><input id="mInvoice" placeholder="رقم الفاتورة"></div>
+            <div class="field"><label>الكمية المشتراة</label><input id="mQty" type="number" min="0" step="0.01" value="1"></div>
+            <div class="field"><label>ملاحظات</label><input id="mNotes" placeholder="اختياري"></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">حفظ الخامة والسعر</button>
+            <button class="btn" type="button" id="cancelMaterial">إلغاء التعديل</button>
+          </div>
+        </form>
+      </div>
+      <div class="card panel">
+        <div class="panel-head"><h2>قائمة الخامات</h2></div>
+        <input class="search" id="materialSearch" placeholder="ابحث بالاسم أو العلامة التجارية أو المورد...">
+        <div class="table-wrap" style="margin-top:12px">
+          <table><thead><tr>
+            <th>الخامة</th><th>العلامة</th><th>حجم العبوة</th>
+            <th>المورد</th><th>السعر الحالي</th><th>آخر تحديث</th><th>إجراءات</th>
+          </tr></thead><tbody id="materialsTable"></tbody></table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="panel-head"><h2>سجل تغير الأسعار</h2></div>
+        <div class="table-wrap"><table><thead><tr>
+          <th>التاريخ</th><th>الخامة</th><th>المورد</th><th>السعر السابق</th>
+          <th>السعر الجديد</th><th>التغير</th><th>الفاتورة</th>
+        </tr></thead><tbody id="priceHistoryTable"></tbody></table></div>
+      </div>
+    </section>
 
-</header>
+    <section class="section" id="page-expenses">
+      <div class="card panel">
+        <div class="panel-head"><h2>تسجيل حركة مالية</h2></div>
+        <form id="transactionForm">
+          <div class="form-grid">
+            <div class="field"><label>نوع الحركة *</label>
+              <select id="tType" required>
+                <option value="expense">مصروف</option>
+                <option value="income">دخل</option>
+              </select>
+            </div>
+            <div class="field"><label>البيان *</label><input id="tDescription" required placeholder="مثال: شراء خامات"></div>
+            <div class="field"><label>المبلغ بالجنيه *</label><input id="tAmount" type="number" min="0.01" step="0.01" required></div>
+            <div class="field"><label>وسيلة الدفع *</label>
+              <select id="tMethod" required>
+                <option value="cash">كاش</option>
+                <option value="visa">فيزا</option>
+                <option value="instapay">إنستا باي</option>
+                <option value="bank">تحويل بنكي</option>
+                <option value="other">أخرى</option>
+              </select>
+            </div>
+            <div class="field"><label>التاريخ *</label><input id="tDate" type="date" required></div>
+            <div class="field"><label>المورد / العميل</label><input id="tParty" placeholder="اختياري"></div>
+            <div class="field"><label>رقم الفاتورة أو المرجع</label><input id="tInvoice" placeholder="اختياري"></div>
+            <div class="field"><label>التصنيف</label>
+              <select id="tCategory">
+                <option value="مواد وخامات">مواد وخامات</option>
+                <option value="معمل">معمل</option>
+                <option value="إيجار">إيجار</option>
+                <option value="مرتبات">مرتبات</option>
+                <option value="مرافق">مرافق</option>
+                <option value="رسوم فيزا">رسوم فيزا</option>
+                <option value="دخل خدمات">دخل خدمات</option>
+                <option value="أخرى">أخرى</option>
+              </select>
+            </div>
+            <div class="field"><label>ملاحظات</label><input id="tNotes" placeholder="اختياري"></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">حفظ الحركة</button>
+            <button class="btn" type="reset">مسح الحقول</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-<main>
+    <section class="section" id="page-records">
+      <div class="card">
+        <div class="panel-head">
+          <h2>السجلات اليومية</h2>
+          <button class="btn primary" id="exportCsv">تصدير CSV</button>
+        </div>
+        <div class="toolbar">
+          <input class="search" id="recordSearch" placeholder="ابحث في البيان أو المورد أو الفاتورة">
+          <input class="search" id="recordFrom" type="date" aria-label="من تاريخ">
+          <input class="search" id="recordTo" type="date" aria-label="إلى تاريخ">
+          <select class="search" id="recordType">
+            <option value="">كل الحركات</option>
+            <option value="income">دخل</option>
+            <option value="expense">مصروف</option>
+          </select>
+          <select class="search" id="recordMethod">
+            <option value="">كل وسائل الدفع</option>
+            <option value="cash">كاش</option>
+            <option value="visa">فيزا</option>
+            <option value="instapay">إنستا باي</option>
+            <option value="bank">تحويل بنكي</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th>التاريخ</th><th>النوع</th><th>البيان</th><th>التصنيف</th>
+            <th>المورد / العميل</th><th>الفاتورة</th><th>الدفع</th><th>المبلغ</th><th>إجراء</th>
+          </tr></thead><tbody id="recordsTable"></tbody></table>
+        </div>
+        <div class="notice" id="recordsTotals"></div>
+      </div>
+    </section>
 
-<nav id="nav"></nav>
+    <section class="section" id="page-accounts">
+      <div class="card panel">
+        <h2 style="margin-bottom:15px">الأرصدة الحالية</h2>
+        <div class="notice">الأرصدة محسوبة من رصيد افتتاحي + الحركات المسجلة. التحويل بين الحسابات سيُضاف في جزء لاحق.</div>
+        <div class="form-grid" id="accountCards"></div>
+      </div>
+      <div class="card">
+        <h2 style="margin-bottom:15px">تسجيل الأرصدة الافتتاحية</h2>
+        <form id="openingForm">
+          <div class="form-grid">
+            <div class="field"><label>رصيد الكاش</label><input id="openCash" type="number" step=".01" value="0"></div>
+            <div class="field"><label>رصيد الفيزا</label><input id="openVisa" type="number" step=".01" value="0"></div>
+            <div class="field"><label>رصيد إنستا باي</label><input id="openInstapay" type="number" step=".01" value="0"></div>
+            <div class="field"><label>رصيد البنك</label><input id="openBank" type="number" step=".01" value="0"></div>
+            <div class="field"><label>رصيد وسائل أخرى</label><input id="openOther" type="number" step=".01" value="0"></div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">حفظ الأرصدة الافتتاحية</button></div>
+        </form>
+      </div>
+    </section>
 
-<div id="app"></div>
-
-<p class="small">احتفظ بنسخة احتياطية من بياناتك بانتظام.</p>
-
-</main>
+    <section class="section" id="page-settings">
+      <div class="card panel">
+        <h2 style="margin-bottom:10px">الإعدادات</h2>
+        <form id="settingsForm">
+          <div class="form-grid">
+            <div class="field">
+              <label>أقل هامش ربح مستهدف (%)</label>
+              <input id="targetMargin" type="number" min="0" max="99" step="1" value="20">
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">حفظ الإعدادات</button></div>
+        </form>
+      </div>
+      <div class="card panel">
+        <h2 style="margin-bottom:10px">النسخ الاحتياطي</h2>
+        <p class="muted">احتفظ بنسخة من بياناتك بشكل دوري. البيانات في هذه النسخة محفوظة محليًا على نفس المتصفح والجهاز.</p>
+        <div class="form-actions">
+          <button class="btn primary" id="backupBtn">تنزيل نسخة احتياطية JSON</button>
+          <label class="btn" for="restoreFile">استعادة نسخة JSON</label>
+          <input id="restoreFile" type="file" accept=".json,application/json" hidden>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="margin-bottom:10px">معلومات مهمة</h2>
+        <p class="muted">هذه نسخة أولية. قبل استخدامها محاسبيًا بشكل نهائي، راجع الأرقام بانتظام واحتفظ بنسخة احتياطية خارج الجهاز.</p>
+      </div>
+    </section>
+  </main>
+</div>
 
 <script>
+"use strict";
 
-const KEY="dental-cost-studio-v1";
+const STORAGE_KEY = "dental-cost-studio-complete-v1";
+const OLD_KEY = "dental-cost-studio-v1";
 
-const $=id=>document.getElementById(id);
+const today = () => new Date().toISOString().slice(0,10);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const money = n => new Intl.NumberFormat("ar-EG", {
+  style:"currency", currency:"EGP", maximumFractionDigits:2
+}).format(Number(n)||0);
 
-const uid=()=>Math.random().toString(36).slice(2,10);
-
-const num=x=>Number(x||0);
-
-const money=x=>num(x).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-
-let db;
-
-try{db=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
-
-if(!db)db={
-
-tools:[{id:uid(),name:"Diagnostic Kit (Tweezer + Probe + Mirror)",price:0,life:1000,uses:0}],
-
-materials:[],
-
-services:[
-
-{id:uid(),name:"Composite Filling — Class I",price:0,tools:[],materials:[]},
-
-{id:uid(),name:"Composite Filling — Class II",price:0,tools:[],materials:[]}
-
-],
-
-expenses:[
-
-{name:"Electricity / Water / Internet",amount:2000},
-
-{name:"Staff Salaries",amount:26100},
-
-{name:"Marketing",amount:0},
-
-{name:"Installment",amount:50000}
-
-],
-
-visits:120,cycleCost:0,cycleCapacity:10
-
+const methodNames = {
+  cash:"كاش", visa:"فيزا", instapay:"إنستا باي",
+  bank:"تحويل بنكي", other:"أخرى"
+};
+const typeNames = {income:"دخل",expense:"مصروف"};
+const titles = {
+  dashboard:"لوحة التحكم",
+  materials:"الخامات ومتابعة الأسعار",
+  expenses:"تسجيل حركة مالية",
+  records:"السجلات اليومية",
+  accounts:"الحسابات ووسائل الدفع",
+  settings:"الإعدادات والنسخ الاحتياطي"
 };
 
-let page="home",editing=null;
+function emptyData() {
+  return {
+    materials:[],
+    transactions:[],
+    priceHistory:[],
+    openingBalances:{cash:0,visa:0,instapay:0,bank:0,other:0},
+    targetMargin:20,
+    dark:false
+  };
+}
 
-function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved) return {...emptyData(),...JSON.parse(saved)};
+    const old = localStorage.getItem(OLD_KEY);
+    if(old) {
+      const previous = JSON.parse(old);
+      const migrated = {...emptyData(),...previous};
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(migrated));
+      return migrated;
+    }
+  } catch(e) {
+    console.error("Could not load saved data",e);
+  }
+  return emptyData();
+}
 
-function button(text,act,primary=false){return `<button class="${primary?"primary":""}" data-act="${act}">${text}</button>`}
+let data = loadData();
 
-function field(label,id,value,type="text"){return `<label>${label}<input id="${id}" type="${type}" value="${String(value??"").replace(/"/g,"&quot;")}"></label>`}
+function saveData() {
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  renderAll();
+}
 
-function getTool(id){return db.tools.find(t=>t.id===id)}
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
 
-function getMat(id){return db.materials.find(m=>m.id===id)}
+function accountBalance(method) {
+  const opening = Number(data.openingBalances[method]||0);
+  const movements = data.transactions
+    .filter(t => t.method === method)
+    .reduce((sum,t) => sum + (t.type === "income" ? Number(t.amount) : -Number(t.amount)),0);
+  return opening + movements;
+}
 
-function wear(t){return num(t.life)>0?num(t.price)/num(t.life):0}
+function showPage(page) {
+  document.querySelectorAll(".section").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(el => el.classList.toggle("active",el.dataset.page===page));
+  const target = document.getElementById("page-"+page);
+  if(target) target.classList.add("active");
+  document.getElementById("pageTitle").textContent = titles[page] || "Dental Clinic Cost Studio";
+  document.getElementById("sidebar").classList.remove("open");
+}
 
-function unitMat(m){return num(m.units)>0?num(m.price)/num(m.units):0}
+function renderDashboard() {
+  const income = data.transactions.filter(t=>t.type==="income").reduce((s,t)=>s+Number(t.amount),0);
+  const expenses = data.transactions.filter(t=>t.type==="expense").reduce((s,t)=>s+Number(t.amount),0);
+  document.getElementById("totalIncome").textContent = money(income);
+  document.getElementById("totalExpenses").textContent = money(expenses);
+  document.getElementById("netCash").textContent = money(income-expenses);
+  document.getElementById("materialCount").textContent = data.materials.length;
 
-function steril(){return num(db.cycleCost)/Math.max(1,num(db.cycleCapacity))}
+  const recent = [...data.transactions].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
+  document.getElementById("recentTable").innerHTML = recent.length ? recent.map(t=>`
+    <tr>
+      <td>${escapeHtml(t.date)}</td>
+      <td><span class="tag ${t.type==="income"?"success":"danger"}">${typeNames[t.type]}</span></td>
+      <td>${escapeHtml(t.description)}</td>
+      <td>${methodNames[t.method]||"أخرى"}</td>
+      <td>${money(t.amount)}</td>
+    </tr>`).join("") : `<tr><td colspan="5" class="empty">لا توجد حركات مالية مسجلة بعد</td></tr>`;
 
-function fixed(){return db.expenses.reduce((a,e)=>a+num(e.amount),0)}
+  document.getElementById("accountSummary").innerHTML = Object.keys(methodNames).map(method=>`
+    <div class="card">
+      <div class="metric-label">${methodNames[method]}</div>
+      <div class="metric" style="font-size:19px">${money(accountBalance(method))}</div>
+    </div>`).join("");
+}
 
-function matCost(s){return s.materials.reduce((a,x)=>a+(getMat(x.id)?unitMat(getMat(x.id))*num(x.qty):0),0)}
+function resetMaterialForm() {
+  document.getElementById("materialForm").reset();
+  document.getElementById("materialId").value="";
+  document.getElementById("mDate").value=today();
+  document.getElementById("mQty").value="1";
+}
 
-function toolCost(s){return s.tools.reduce((a,x)=>a+(getTool(x.id)?wear(getTool(x.id))*num(x.qty)+steril()*num(x.qty):0),0)}
+function renderMaterials() {
+  const search = (document.getElementById("materialSearch").value||"").trim().toLowerCase();
+  const items = data.materials.filter(m =>
+    [m.name,m.brand,m.pack,m.supplier,m.invoice].join(" ").toLowerCase().includes(search)
+  );
 
-function total(s){return matCost(s)+toolCost(s)+fixed()/Math.max(1,num(db.visits))}
+  document.getElementById("materialsTable").innerHTML = items.length ? items.map(m=>`
+    <tr>
+      <td>${escapeHtml(m.name)}</td>
+      <td>${escapeHtml(m.brand||"—")}</td>
+      <td>${escapeHtml(m.pack||"—")}</td>
+      <td>${escapeHtml(m.supplier||"—")}</td>
+      <td><strong>${money(m.price)}</strong></td>
+      <td>${escapeHtml(m.date||"—")}</td>
+      <td>
+        <button class="btn" data-edit-material="${m.id}">تعديل</button>
+        <button class="btn danger" data-delete-material="${m.id}">حذف</button>
+      </td>
+    </tr>`).join("") : `<tr><td colspan="7" class="empty">لا توجد خامات مطابقة</td></tr>`;
 
-function nav(){let items=[["home","الرئيسية"],["tools","الأدوات"],["materials","الخامات"],["services","الخدمات"],["expenses","المصروفات"],["backup","النسخ الاحتياطي"]];$("nav").innerHTML=items.map(x=>`<button data-page="${x[0]}" class="${page===x[0]?"active":""}">${x[1]}</button>`).join("")}
+  const history = [...data.priceHistory].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,100);
+  document.getElementById("priceHistoryTable").innerHTML = history.length ? history.map(h=>{
+    const percent = h.oldPrice ? ((h.newPrice-h.oldPrice)/h.oldPrice)*100 : 0;
+    let badge = `<span class="tag">أول سعر مسجل</span>`;
+    if(h.oldPrice !== null && h.oldPrice !== undefined) {
+      if(percent >= 5) badge=`<span class="tag danger">+${percent.toFixed(1)}%</span>`;
+      else if(percent > 0) badge=`<span class="tag warning">+${percent.toFixed(1)}%</span>`;
+      else if(percent < 0) badge=`<span class="tag success">${percent.toFixed(1)}%</span>`;
+      else badge=`<span class="tag">0%</span>`;
+    }
+    return `<tr>
+      <td>${escapeHtml(h.date)}</td><td>${escapeHtml(h.name)}</td>
+      <td>${escapeHtml(h.supplier||"—")}</td>
+      <td>${h.oldPrice==null?"—":money(h.oldPrice)}</td>
+      <td>${money(h.newPrice)}</td><td>${badge}</td>
+      <td>${escapeHtml(h.invoice||"—")}</td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="7" class="empty">سجل الأسعار سيظهر هنا بعد إضافة الخامات وتحديث أسعارها</td></tr>`;
+}
 
-function home(){return `<div class="grid">
+function renderRecords() {
+  const q = (document.getElementById("recordSearch").value||"").trim().toLowerCase();
+  const from = document.getElementById("recordFrom").value;
+  const to = document.getElementById("recordTo").value;
+  const type = document.getElementById("recordType").value;
+  const method = document.getElementById("recordMethod").value;
 
-<div class="stat"><div class="small">المصروفات الشهرية</div><div class="big">${money(fixed())} ج.م</div></div>
+  const filtered = [...data.transactions].filter(t=>{
+    const matchesText = [t.description,t.party,t.invoice,t.category,t.notes].join(" ").toLowerCase().includes(q);
+    return matchesText && (!from||t.date>=from) && (!to||t.date<=to)
+      && (!type||t.type===type) && (!method||t.method===method);
+  }).sort((a,b)=>b.date.localeCompare(a.date));
 
-<div class="stat"><div class="small">عدد الخامات</div><div class="big">${db.materials.length}</div></div>
+  document.getElementById("recordsTable").innerHTML = filtered.length ? filtered.map(t=>`
+    <tr>
+      <td>${escapeHtml(t.date)}</td>
+      <td><span class="tag ${t.type==="income"?"success":"danger"}">${typeNames[t.type]}</span></td>
+      <td>${escapeHtml(t.description)}</td>
+      <td>${escapeHtml(t.category||"—")}</td>
+      <td>${escapeHtml(t.party||"—")}</td>
+      <td>${escapeHtml(t.invoice||"—")}</td>
+      <td>${methodNames[t.method]||"أخرى"}</td>
+      <td>${money(t.amount)}</td>
+      <td><button class="btn danger" data-delete-transaction="${t.id}">حذف</button></td>
+    </tr>`).join("") : `<tr><td colspan="9" class="empty">لا توجد سجلات مطابقة</td></tr>`;
 
-<div class="stat"><div class="small">الأدوات والأطقم</div><div class="big">${db.tools.length}</div></div>
+  const inc = filtered.filter(t=>t.type==="income").reduce((s,t)=>s+Number(t.amount),0);
+  const exp = filtered.filter(t=>t.type==="expense").reduce((s,t)=>s+Number(t.amount),0);
+  document.getElementById("recordsTotals").innerHTML =
+    `عدد الحركات: <strong>${filtered.length}</strong> &nbsp; | &nbsp; إجمالي الدخل: <strong>${money(inc)}</strong> &nbsp; | &nbsp; إجمالي المصروفات: <strong>${money(exp)}</strong> &nbsp; | &nbsp; الصافي: <strong>${money(inc-exp)}</strong>`;
+}
 
-</div><div class="card"><h2>إعدادات التعقيم والزيارات</h2><div class="grid">
+function renderAccounts() {
+  document.getElementById("accountCards").innerHTML = Object.keys(methodNames).map(method=>`
+    <div class="card">
+      <div class="metric-label">${methodNames[method]}</div>
+      <div class="metric" style="font-size:22px">${money(accountBalance(method))}</div>
+    </div>`).join("");
 
-${field("عدد الزيارات شهريًا","visits",db.visits,"number")}
+  const ids = {cash:"openCash",visa:"openVisa",instapay:"openInstapay",bank:"openBank",other:"openOther"};
+  for(const method in ids) {
+    const input = document.getElementById(ids[method]);
+    if(document.activeElement !== input) input.value = Number(data.openingBalances[method]||0);
+  }
+}
 
-${field("تكلفة دورة التعقيم بالجنيه","cycle",db.cycleCost,"number")}
+function renderAll() {
+  renderDashboard();
+  renderMaterials();
+  renderRecords();
+  renderAccounts();
+  document.body.classList.toggle("dark",!!data.dark);
+  document.getElementById("themeBtn").textContent = data.dark ? "☀ الوضع النهاري" : "☾ الوضع الليلي";
+  document.getElementById("targetMargin").value = data.targetMargin ?? 20;
+}
 
-${field("عدد وحدات الأدوات بالدورة","capacity",db.cycleCapacity,"number")}
-
-</div>${button("حفظ الإعدادات","settings",true)}
-
-<p class="small">تكلفة التعقيم لكل وحدة = تكلفة الدورة ÷ عدد وحدات الأدوات في الدورة.</p></div>
-
-<div class="card"><h2>تكلفة الخدمات</h2>${db.services.map(s=>`<div class="item"><strong>${s.name}</strong><p class="small">التكلفة التقديرية: ${money(total(s))} ج.م</p><p>سعر الخدمة: ${money(s.price)} ج.م</p><p>المتبقي بعد التكلفة: ${money(s.price-total(s))} ج.م</p></div>`).join("")}</div>`}
-
-function tools(){return `<div class="card"><div class="row"><h2>الأدوات والأطقم</h2>${button("+ إضافة أداة","newtool",true)}</div><p class="small">الـ Diagnostic Kit طقم واحد يتكوّن من Tweezer + Probe + Mirror. أدخل سعر الطقم كاملًا، ولا تضف مكوناته مرة أخرى لنفس الخدمة.</p>
-
-${db.tools.map(t=>`<div class="item"><strong>${t.name}</strong><p class="small">سعر الشراء: ${money(t.price)} ج.م | العمر المتوقع: ${t.life} استخدام | تكلفة الاستخدام: ${money(wear(t))} ج.م</p><div class="row">${button("تعديل","edittool:"+t.id)}${button("+1 استخدام","use:"+t.id)}${button("حذف","deltool:"+t.id)}</div></div>`).join("")}</div>
-
-${editing?toolForm():""}`}
-
-function toolForm(){let t=editing==="new"?{name:"",price:0,life:1000}:getTool(editing);if(!t)return "";return `<div class="card"><h2>بيانات الأداة</h2><div class="grid">${field("اسم الأداة أو الطقم","tname",t.name)}${field("سعر الشراء بالجنيه","tprice",t.price,"number")}${field("العمر المتوقع بالاستخدامات","tlife",t.life,"number")}</div>${button("حفظ الأداة","savetool",true)} ${button("إلغاء","cancel")}</div>`}
-
-function materials(){return `<div class="card"><div class="row"><h2>الخامات</h2>${button("+ إضافة خامة","newmat",true)}</div>${db.materials.map(m=>`<div class="item"><strong>${m.name}</strong><p class="small">سعر العبوة: ${money(m.price)} ج.م | وحدات العبوة: ${m.units} | تكلفة الوحدة: ${money(unitMat(m))} ج.م</p><div class="row">${button("تعديل","editmat:"+m.id)}${button("حذف","delmat:"+m.id)}</div></div>`).join("")||"<p class='small'>لم تضف خامات بعد.</p>"}</div>
-
-${editing?matForm():""}`}
-
-function matForm(){let m=editing==="newmat"?{name:"",price:0,units:1}:getMat(editing);if(!m)return "";return `<div class="card"><h2>بيانات الخامة</h2><div class="grid">${field("اسم الخامة","mname",m.name)}${field("سعر العبوة بالجنيه","mprice",m.price,"number")}${field("عدد الوحدات في العبوة","munits",m.units,"number")}</div>${button("حفظ الخامة","savemat",true)} ${button("إلغاء","cancel")}</div>`}
-
-function services(){return `<div class="card"><div class="row"><h2>الخدمات والتسعير</h2>${button("+ إضافة خدمة","newservice",true)}</div>${db.services.map(s=>`<div class="item"><strong>${s.name}</strong><p class="small">التكلفة المقدرة: ${money(total(s))} ج.م</p><p>السعر: ${money(s.price)} ج.م | المتبقي: ${money(s.price-total(s))} ج.م</p>${button("تعديل الخدمة","editservice:"+s.id)}</div>`).join("")}</div>
-
-${editing?serviceForm():""}`}
-
-function serviceForm(){let s=editing==="newservice"?{name:"",price:0,tools:[],materials:[]}:db.services.find(x=>x.id===editing);if(!s)return "";return `<div class="card"><h2>بيانات الخدمة</h2>${field("اسم الخدمة","sname",s.name)}${field("سعر الخدمة بالجنيه","sprice",s.price,"number")}${button("حفظ بيانات الخدمة","saveservice",true)}
-
-<h3>إضافة أداة أو طقم</h3><div class="grid"><label>الأداة<select id="stool">${db.tools.map(t=>`<option value="${t.id}">${t.name}</option>`).join("")}</select></label>${field("الكمية","stqty",1,"number")}</div>${button("إضافة الأداة للخدمة","addtool")}
-
-<h3>الأدوات المستخدمة</h3>${s.tools.map((x,i)=>`<div class="item">${getTool(x.id)?.name||"أداة"} — الكمية ${x.qty} ${button("إزالة","remtool:"+i)}</div>`).join("")}
-
-<h3>إضافة خامة</h3><div class="grid"><label>الخامة<select id="smat">${db.materials.map(m=>`<option value="${m.id}">${m.name}</option>`).join("")}</select></label>${field("الكمية المستخدمة","smqty",1,"number")}</div>${button("إضافة الخامة للخدمة","addmat")}
-
-<h3>الخامات المستخدمة</h3>${s.materials.map((x,i)=>`<div class="item">${getMat(x.id)?.name||"خامة"} — الكمية ${x.qty} ${button("إزالة","remmat:"+i)}</div>`).join("")}
-
-<p>تكلفة الخامات: ${money(matCost(s))} ج.م</p><p>تكلفة الأدوات والتعقيم: ${money(toolCost(s))} ج.م</p><p>التكلفة الكلية التقديرية: <strong>${money(total(s))} ج.م</strong></p></div>`}
-
-function expenses(){return `<div class="card"><h2>المصروفات الشهرية</h2>${db.expenses.map((e,i)=>`<div class="grid item">${field("اسم المصروف","ename"+i,e.name)}${field("المبلغ بالجنيه","eamount"+i,e.amount,"number")}${button("حذف","delexp:"+i)}</div>`).join("")}${button("+ إضافة مصروف","newexp")} ${button("حفظ المصروفات","saveexp",true)}</div>`}
-
-function backup(){return `<div class="card"><h2>النسخ الاحتياطي</h2><p>نزّل ملف JSON واحتفظ به في تطبيق Files أو iCloud Drive.</p>${button("تنزيل نسخة احتياطية","export",true)}<label style="margin-top:15px">استرجاع نسخة سابقة<input type="file" id="importfile" accept=".json,application/json"></label><p class="small">استرجاع نسخة سيستبدل البيانات الحالية.</p><div id="msg" class="small"></div></div>`}
-
-function render(){save();nav();$("app").innerHTML=page==="home"?home():page==="tools"?tools():page==="materials"?materials():page==="services"?services():page==="expenses"?expenses():backup()}
-
-$("nav").addEventListener("click",e=>{let b=e.target.closest("[data-page]");if(!b)return;page=b.dataset.page;editing=null;render()});
-
-$("app").addEventListener("click",e=>{let b=e.target.closest("[data-act]");if(!b)return;let a=b.dataset.act;
-
-if(a==="settings"){db.visits=Math.max(1,num($("visits").value));db.cycleCost=Math.max(0,num($("cycle").value));db.cycleCapacity=Math.max(1,num($("capacity").value));render()}
-
-else if(a==="newtool"){editing="new";render()}else if(a.startsWith("edittool:")){editing=a.slice(9);render()}else if(a==="savetool"){let t=editing==="new"?{id:uid(),uses:0}:getTool(editing);t.name=$("tname").value.trim();t.price=Math.max(0,num($("tprice").value));t.life=Math.max(1,num($("tlife").value));if(!t.name){alert("اكتب اسم الأداة");return}if(editing==="new")db.tools.push(t);editing=null;render()}else if(a.startsWith("use:")){let t=getTool(a.slice(4));if(t)t.uses=num(t.uses)+1;render()}else if(a.startsWith("deltool:")){db.tools=db.tools.filter(t=>t.id!==a.slice(8));db.services.forEach(s=>s.tools=s.tools.filter(x=>x.id!==a.slice(8)));render()}
-
-else if(a==="newmat"){editing="newmat";render()}else if(a.startsWith("editmat:")){editing=a.slice(8);render()}else if(a==="savemat"){let m=editing==="newmat"?{id:uid()}:getMat(editing);m.name=$("mname").value.trim();m.price=Math.max(0,num($("mprice").value));m.units=Math.max(.0001,num($("munits").value));if(!m.name){alert("اكتب اسم الخامة");return}if(editing==="newmat")db.materials.push(m);editing=null;render()}else if(a.startsWith("delmat:")){db.materials=db.materials.filter(m=>m.id!==a.slice(7));db.services.forEach(s=>s.materials=s.materials.filter(x=>x.id!==a.slice(7)));render()}
-
-else if(a==="newservice"){editing="newservice";render()}else if(a.startsWith("editservice:")){editing=a.slice(12);render()}else if(a==="saveservice"){let s=editing==="newservice"?{id:uid(),tools:[],materials:[]}:db.services.find(x=>x.id===editing);s.name=$("sname").value.trim();s.price=Math.max(0,num($("sprice").value));if(!s.name){alert("اكتب اسم الخدمة");return}if(editing==="newservice")db.services.push(s);editing=s.id;render()}else if(a==="addtool"||a==="addmat"){if(editing==="newservice"){alert("احفظ الخدمة أولًا ثم أضف الأدوات والخامات");return}let s=db.services.find(x=>x.id===editing);if(a==="addtool"){let id=$("stool").value,q=Math.max(0,num($("stqty").value));if(id&&q)s.tools.push({id,qty:q})}else{let id=$("smat").value,q=Math.max(0,num($("smqty").value));if(id&&q)s.materials.push({id,qty:q})}render()}else if(a.startsWith("remtool:")){db.services.find(x=>x.id===editing).tools.splice(num(a.slice(8)),1);render()}else if(a.startsWith("remmat:")){db.services.find(x=>x.id===editing).materials.splice(num(a.slice(7)),1);render()}
-
-else if(a==="newexp"){db.expenses.push({name:"مصروف جديد",amount:0});render()}else if(a.startsWith("delexp:")){db.expenses.splice(num(a.slice(7)),1);render()}else if(a==="saveexp"){db.expenses.forEach((x,i)=>{x.name=$("ename"+i).value;x.amount=Math.max(0,num($("eamount"+i).value))});render()}
-
-else if(a==="export"){let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="dental-clinic-backup.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}else if(a==="cancel"){editing=null;render()}
-
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>showPage(btn.dataset.page));
+});
+document.querySelectorAll("[data-goto]").forEach(btn=>{
+  btn.addEventListener("click",()=>showPage(btn.dataset.goto));
 });
 
-$("app").addEventListener("change",e=>{if(e.target.id!=="importfile")return;let f=e.target.files&&e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{let x=JSON.parse(rd.result);if(!x.tools||!x.materials||!x.services)throw Error();db=x;if(!db.tools.some(t=>t.name.startsWith("Diagnostic Kit")))db.tools.unshift({id:uid(),name:"Diagnostic Kit (Tweezer + Probe + Mirror)",price:0,life:1000,uses:0});render();$("msg").textContent="تم استرجاع النسخة."}catch(err){$("msg").textContent="الملف غير صالح."}};rd.readAsText(f)});
+document.getElementById("menuBtn").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+});
 
-render();
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  data.dark=!data.dark;
+  saveData();
+});
 
+document.getElementById("quickExpense").addEventListener("click",()=>{
+  showPage("expenses");
+  document.getElementById("tType").value="expense";
+  document.getElementById("tDate").value=today();
+  document.getElementById("tDescription").focus();
+});
+
+document.getElementById("materialForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const id = document.getElementById("materialId").value;
+  const name = document.getElementById("mName").value.trim();
+  const brand = document.getElementById("mBrand").value.trim();
+  const pack = document.getElementById("mPack").value.trim();
+  const supplier = document.getElementById("mSupplier").value.trim();
+  const price = Number(document.getElementById("mPrice").value);
+  const date = document.getElementById("mDate").value||today();
+  const invoice = document.getElementById("mInvoice").value.trim();
+  const qty = Number(document.getElementById("mQty").value)||1;
+  const notes = document.getElementById("mNotes").value.trim();
+
+  if(!name || !Number.isFinite(price) || price<0) {
+    alert("اكتب اسم الخامة وسعرًا صحيحًا.");
+    return;
+  }
+
+  let existing = id ? data.materials.find(m=>m.id===id) : null;
+
+  // المطابقة تعتمد على اسم الخامة والعلامة التجارية وحجم العبوة والمورد.
+  // لا تتم مقارنة إجمالي الفواتير ببعضها.
+  if(!existing) {
+    const norm = s=>(s||"").trim().toLowerCase();
+    existing = data.materials.find(m =>
+      norm(m.name)===norm(name) &&
+      norm(m.brand)===norm(brand) &&
+      norm(m.pack)===norm(pack) &&
+      norm(m.supplier)===norm(supplier)
+    );
+  }
+
+  const oldPrice = existing ? Number(existing.price) : null;
+  const oldId = existing ? existing.id : uid();
+
+  data.priceHistory.push({
+    id:uid(), materialId:oldId, name, brand, pack, supplier,
+    oldPrice, newPrice:price, date, invoice
+  });
+
+  const item = {
+    id:oldId,name,brand,pack,supplier,price,date,invoice,qty,notes
+  };
+
+  if(existing) {
+    data.materials = data.materials.map(m=>m.id===existing.id ? item : m);
+    if(oldPrice!==null && price>oldPrice) {
+      const increase = ((price-oldPrice)/Math.max(oldPrice,0.000001))*100;
+      alert(`تم تحديث السعر.\nالسعر السابق: ${money(oldPrice)}\nالسعر الجديد: ${money(price)}\nالزيادة: ${increase.toFixed(1)}%${increase>=5?"\nتنبيه: الزيادة 5% أو أكثر!":""}`);
+    } else {
+      alert("تم تحديث بيانات الخامة والسعر.");
+    }
+  } else {
+    data.materials.push(item);
+    alert("تمت إضافة الخامة. السعر ده هيكون أساس المقارنة القادمة.");
+  }
+
+  resetMaterialForm();
+  saveData();
+});
+
+document.getElementById("cancelMaterial").addEventListener("click",resetMaterialForm);
+document.getElementById("mDate").value=today();
+
+document.getElementById("materialsTable").addEventListener("click",event=>{
+  const edit = event.target.closest("[data-edit-material]");
+  const del = event.target.closest("[data-delete-material]");
+
+  if(edit) {
+    const m = data.materials.find(x=>x.id===edit.dataset.editMaterial);
+    if(!m) return;
+    document.getElementById("materialId").value=m.id;
+    document.getElementById("mName").value=m.name||"";
+    document.getElementById("mBrand").value=m.brand||"";
+    document.getElementById("mPack").value=m.pack||"";
+    document.getElementById("mSupplier").value=m.supplier||"";
+    document.getElementById("mPrice").value=m.price;
+    document.getElementById("mDate").value=m.date||today();
+    document.getElementById("mInvoice").value=m.invoice||"";
+    document.getElementById("mQty").value=m.qty||1;
+    document.getElementById("mNotes").value=m.notes||"";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  if(del && confirm("هل أنت متأكد من حذف الخامة؟ سيظل سجل الأسعار محفوظًا.")) {
+    data.materials=data.materials.filter(m=>m.id!==del.dataset.deleteMaterial);
+    saveData();
+  }
+});
+
+document.getElementById("transactionForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const amount = Number(document.getElementById("tAmount").value);
+  if(!Number.isFinite(amount)||amount<=0) {
+    alert("اكتب مبلغًا أكبر من صفر.");
+    return;
+  }
+  data.transactions.push({
+    id:uid(),
+    type:document.getElementById("tType").value,
+    description:document.getElementById("tDescription").value.trim(),
+    amount,
+    method:document.getElementById("tMethod").value,
+    date:document.getElementById("tDate").value||today(),
+    party:document.getElementById("tParty").value.trim(),
+    invoice:document.getElementById("tInvoice").value.trim(),
+    category:document.getElementById("tCategory").value,
+    notes:document.getElementById("tNotes").value.trim()
+  });
+  event.target.reset();
+  document.getElementById("tDate").value=today();
+  saveData();
+  alert("تم حفظ الحركة المالية.");
+});
+
+document.getElementById("tDate").value=today();
+
+["recordSearch","recordFrom","recordTo","recordType","recordMethod"].forEach(id=>{
+  document.getElementById(id).addEventListener("input",renderRecords);
+  document.getElementById(id).addEventListener("change",renderRecords);
+});
+document.getElementById("materialSearch").addEventListener("input",renderMaterials);
+
+document.getElementById("recordsTable").addEventListener("click",event=>{
+  const btn = event.target.closest("[data-delete-transaction]");
+  if(!btn) return;
+  if(confirm("حذف الحركة المالية؟ سيتم تعديل رصيد وسيلة الدفع تلقائيًا.")) {
+    data.transactions=data.transactions.filter(t=>t.id!==btn.dataset.deleteTransaction);
+    saveData();
+  }
+});
+
+document.getElementById("exportCsv").addEventListener("click",()=>{
+  const rows = [
+    ["Date","Type","Description","Category","Party","Invoice","Payment Method","Amount","Notes"],
+    ...data.transactions.map(t=>[
+      t.date,typeNames[t.type]||t.type,t.description,t.category||"",
+      t.party||"",t.invoice||"",methodNames[t.method]||t.method,t.amount,t.notes||""
+    ])
+  ];
+  const csv = "\uFEFF" + rows.map(row=>row.map(value=>{
+    const text=String(value??"").replace(/"/g,'""');
+    return `"${text}"`;
+  }).join(",")).join("\r\n");
+  const blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url;
+  a.download="dental-clinic-daily-records.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("openingForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  data.openingBalances = {
+    cash:Number(document.getElementById("openCash").value)||0,
+    visa:Number(document.getElementById("openVisa").value)||0,
+    instapay:Number(document.getElementById("openInstapay").value)||0,
+    bank:Number(document.getElementById("openBank").value)||0,
+    other:Number(document.getElementById("openOther").value)||0
+  };
+  saveData();
+  alert("تم حفظ الأرصدة الافتتاحية.");
+});
+
+document.getElementById("settingsForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const margin=Number(document.getElementById("targetMargin").value);
+  if(!Number.isFinite(margin)||margin<0||margin>=100) {
+    alert("هامش الربح يجب أن يكون من 0 إلى أقل من 100%.");
+    return;
+  }
+  data.targetMargin=margin;
+  saveData();
+  alert("تم حفظ هامش الربح المستهدف.");
+});
+
+document.getElementById("backupBtn").addEventListener("click",()=>{
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url;
+  a.download="dental-clinic-backup-"+today()+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("restoreFile").addEventListener("change",async event=>{
+  const file=event.target.files[0];
+  if(!file) return;
+  try {
+    const restored=JSON.parse(await file.text());
+    if(!restored || !Array.isArray(restored.materials) || !Array.isArray(restored.transactions)) {
+      throw new Error("invalid backup");
+    }
+    if(!confirm("الاستعادة ستستبدل البيانات الحالية. هل تريد المتابعة؟")) return;
+    data={...emptyData(),...restored};
+    saveData();
+    alert("تمت استعادة النسخة الاحتياطية.");
+  } catch(error) {
+    alert("ملف النسخة الاحتياطية غير صالح أو غير مدعوم.");
+  } finally {
+    event.target.value="";
+  }
+});
+
+document.getElementById("todayLabel").textContent =
+  new Date().toLocaleDateString("ar-EG",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+
+renderAll();
 </script>
-
 </body>
-
 </html>
