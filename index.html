@@ -347,6 +347,99 @@ th {color:var(--muted);font-weight:600;background:rgba(120,140,160,.05)}
       </div>
     </section>
 
+<section class="section" id="page-services">
+  <div class="card panel">
+    <div class="panel-head">
+      <h2>حساب تكلفة الخدمة وسعر البيع</h2>
+      <span class="tag">هامش الربح المستهدف</span>
+    </div>
+
+    <div class="notice">
+      هامش الربح محسوب من سعر البيع، وليس كنسبة زيادة على التكلفة.
+      الهدف الحالي 20% ويمكن تغييره من الإعدادات.
+    </div>
+
+    <form id="serviceForm">
+      <div class="form-grid">
+        <div class="field">
+          <label>اسم الخدمة *</label>
+          <input id="sName" required placeholder="مثال: Composite Filling">
+        </div>
+        <div class="field">
+          <label>سعر البيع الحالي بالجنيه *</label>
+          <input id="sPrice" type="number" min="0" step=".01" required>
+        </div>
+        <div class="field">
+          <label>تكلفة الخامات لكل حالة</label>
+          <input id="sMaterials" type="number" min="0" step=".01" value="0">
+        </div>
+        <div class="field">
+          <label>تكلفة المعمل</label>
+          <input id="sLab" type="number" min="0" step=".01" value="0">
+        </div>
+        <div class="field">
+          <label>التعقيم والمستهلكات</label>
+          <input id="sSterilization" type="number" min="0" step=".01" value="0">
+        </div>
+        <div class="field">
+          <label>نصيب الخدمة من المصروفات الثابتة</label>
+          <input id="sFixed" type="number" min="0" step=".01" value="0">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn primary" type="submit">حساب وحفظ الخدمة</button>
+        <button class="btn" type="reset" id="resetService">مسح الحقول</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="metric-label">إجمالي تكلفة الحالة</div>
+      <div class="metric" id="serviceCost">0 ج.م</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">صافي الربح قبل الضرائب</div>
+      <div class="metric" id="serviceProfit">0 ج.م</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">هامش الربح</div>
+      <div class="metric" id="serviceMargin">0%</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">سعر البيع لتحقيق الهدف</div>
+      <div class="metric" id="recommendedPrice">0 ج.م</div>
+    </div>
+  </div>
+
+  <div id="serviceWarning" class="notice">
+    أدخل بيانات الخدمة لحساب التكلفة والهامش.
+  </div>
+
+  <div class="card">
+    <div class="panel-head">
+      <h2>الخدمات المحفوظة</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>الخدمة</th>
+            <th>التكلفة</th>
+            <th>سعر البيع</th>
+            <th>الربح</th>
+            <th>الهامش</th>
+            <th>السعر المستهدف</th>
+            <th>إجراء</th>
+          </tr>
+        </thead>
+        <tbody id="servicesTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
     <section class="section" id="page-expenses">
       <div class="card panel">
         <div class="panel-head"><h2>تسجيل حركة مالية</h2></div>
