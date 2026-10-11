@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Dental Clinic Cost Studio</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#f2f6f9;color:#183344;font-family:Arial,sans-serif}
+
+header{background:#123b52;color:white;padding:22px 16px}
+
+header h1{font-size:23px;margin:0 0 8px}
+
+header p{margin:0;font-size:14px}
+
+main{max-width:900px;margin:auto;padding:14px}
+
+nav{display:flex;gap:7px;overflow:auto;margin:10px 0}
+
+button{border:0;border-radius:8px;padding:11px 14px;background:#e1ebf0;color:#183344;cursor:pointer;font-size:14px}
+
+button.active,.primary{background:#176b87;color:white}
+
+.card{background:white;padding:15px;border-radius:12px;margin:12px 0;border:1px solid #dce6ec}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+
+label{display:block;font-size:13px;margin-bottom:8px}
+
+input,select{display:block;width:100%;padding:11px;margin-top:5px;border:1px solid #cad8e0;border-radius:8px;background:white;font-size:16px}
+
+.item{padding:12px 0;border-bottom:1px solid #e3ebef}
+
+.small{font-size:12px;color:#637984;line-height:1.7}
+
+strong{overflow-wrap:anywhere}
+
+h2{font-size:19px}
+
+h3{font-size:16px}
+
+.stat{padding:12px;border:1px solid #dce6ec;border-radius:9px;margin:5px 0;background:#fff}
+
+.big{font-size:20px;font-weight:bold;margin-top:7px}
+
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>Dental Clinic Cost Studio</h1>
+
+<p>حساب تكلفة العيادة والخامات والأدوات والتعقيم وصافي الربح</p>
+
+</header>
+
+<main>
+
+<nav id="nav"></nav>
+
+<div id="app"></div>
+
+<p class="small">احتفظ بنسخة احتياطية من بياناتك بانتظام.</p>
+
+</main>
+
+<script>
+
+const KEY="dental-cost-studio-v1";
+
+const $=id=>document.getElementById(id);
+
+const uid=()=>Math.random().toString(36).slice(2,10);
+
+const num=x=>Number(x||0);
+
+const money=x=>num(x).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+
+let db;
+
+try{db=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+
+if(!db)db={
+
+tools:[{id:uid(),name:"Diagnostic Kit (Tweezer + Probe + Mirror)",price:0,life:1000,uses:0}],
+
+materials:[],
+
+services:[
+
+{id:uid(),name:"Composite Filling — Class I",price:0,tools:[],materials:[]},
+
+{id:uid(),name:"Composite Filling — Class II",price:0,tools:[],materials:[]}
+
+],
+
+expenses:[
+
+{name:"Electricity / Water / Internet",amount:2000},
+
+{name:"Staff Salaries",amount:26100},
+
+{name:"Marketing",amount:0},
+
+{name:"Installment",amount:50000}
+
+],
+
+visits:120,cycleCost:0,cycleCapacity:10
+
+};
+
+let page="home",editing=null;
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+
+function button(text,act,primary=false){return `<button class="${primary?"primary":""}" data-act="${act}">${text}</button>`}
+
+function field(label,id,value,type="text"){return `<label>${label}<input id="${id}" type="${type}" value="${String(value??"").replace(/"/g,"&quot;")}"></label>`}
+
+function getTool(id){return db.tools.find(t=>t.id===id)}
+
+function getMat(id){return db.materials.find(m=>m.id===id)}
+
+function wear(t){return num(t.life)>0?num(t.price)/num(t.life):0}
+
+function unitMat(m){return num(m.units)>0?num(m.price)/num(m.units):0}
+
+function steril(){return num(db.cycleCost)/Math.max(1,num(db.cycleCapacity))}
+
+function fixed(){return db.expenses.reduce((a,e)=>a+num(e.amount),0)}
+
+function matCost(s){return s.materials.reduce((a,x)=>a+(getMat(x.id)?unitMat(getMat(x.id))*num(x.qty):0),0)}
+
+function toolCost(s){return s.tools.reduce((a,x)=>a+(getTool(x.id)?wear(getTool(x.id))*num(x.qty)+steril()*num(x.qty):0),0)}
+
+function total(s){return matCost(s)+toolCost(s)+fixed()/Math.max(1,num(db.visits))}
+
+function nav(){let items=[["home","الرئيسية"],["tools","الأدوات"],["materials","الخامات"],["services","الخدمات"],["expenses","المصروفات"],["backup","النسخ الاحتياطي"]];$("nav").innerHTML=items.map(x=>`<button data-page="${x[0]}" class="${page===x[0]?"active":""}">${x[1]}</button>`).join("")}
+
+function home(){return `<div class="grid">
+
+<div class="stat"><div class="small">المصروفات الشهرية</div><div class="big">${money(fixed())} ج.م</div></div>
+
+<div class="stat"><div class="small">عدد الخامات</div><div class="big">${db.materials.length}</div></div>
+
+<div class="stat"><div class="small">الأدوات والأطقم</div><div class="big">${db.tools.length}</div></div>
+
+</div><div class="card"><h2>إعدادات التعقيم والزيارات</h2><div class="grid">
+
+${field("عدد الزيارات شهريًا","visits",db.visits,"number")}
+
+${field("تكلفة دورة التعقيم بالجنيه","cycle",db.cycleCost,"number")}
+
+${field("عدد وحدات الأدوات بالدورة","capacity",db.cycleCapacity,"number")}
+
+</div>${button("حفظ الإعدادات","settings",true)}
+
+<p class="small">تكلفة التعقيم لكل وحدة = تكلفة الدورة ÷ عدد وحدات الأدوات في الدورة.</p></div>
+
+<div class="card"><h2>تكلفة الخدمات</h2>${db.services.map(s=>`<div class="item"><strong>${s.name}</strong><p class="small">التكلفة التقديرية: ${money(total(s))} ج.م</p><p>سعر الخدمة: ${money(s.price)} ج.م</p><p>المتبقي بعد التكلفة: ${money(s.price-total(s))} ج.م</p></div>`).join("")}</div>`}
+
+function tools(){return `<div class="card"><div class="row"><h2>الأدوات والأطقم</h2>${button("+ إضافة أداة","newtool",true)}</div><p class="small">الـ Diagnostic Kit طقم واحد يتكوّن من Tweezer + Probe + Mirror. أدخل سعر الطقم كاملًا، ولا تضف مكوناته مرة أخرى لنفس الخدمة.</p>
+
+${db.tools.map(t=>`<div class="item"><strong>${t.name}</strong><p class="small">سعر الشراء: ${money(t.price)} ج.م | العمر المتوقع: ${t.life} استخدام | تكلفة الاستخدام: ${money(wear(t))} ج.م</p><div class="row">${button("تعديل","edittool:"+t.id)}${button("+1 استخدام","use:"+t.id)}${button("حذف","deltool:"+t.id)}</div></div>`).join("")}</div>
+
+${editing?toolForm():""}`}
+
+function toolForm(){let t=editing==="new"?{name:"",price:0,life:1000}:getTool(editing);if(!t)return "";return `<div class="card"><h2>بيانات الأداة</h2><div class="grid">${field("اسم الأداة أو الطقم","tname",t.name)}${field("سعر الشراء بالجنيه","tprice",t.price,"number")}${field("العمر المتوقع بالاستخدامات","tlife",t.life,"number")}</div>${button("حفظ الأداة","savetool",true)} ${button("إلغاء","cancel")}</div>`}
+
+function materials(){return `<div class="card"><div class="row"><h2>الخامات</h2>${button("+ إضافة خامة","newmat",true)}</div>${db.materials.map(m=>`<div class="item"><strong>${m.name}</strong><p class="small">سعر العبوة: ${money(m.price)} ج.م | وحدات العبوة: ${m.units} | تكلفة الوحدة: ${money(unitMat(m))} ج.م</p><div class="row">${button("تعديل","editmat:"+m.id)}${button("حذف","delmat:"+m.id)}</div></div>`).join("")||"<p class='small'>لم تضف خامات بعد.</p>"}</div>
+
+${editing?matForm():""}`}
+
+function matForm(){let m=editing==="newmat"?{name:"",price:0,units:1}:getMat(editing);if(!m)return "";return `<div class="card"><h2>بيانات الخامة</h2><div class="grid">${field("اسم الخامة","mname",m.name)}${field("سعر العبوة بالجنيه","mprice",m.price,"number")}${field("عدد الوحدات في العبوة","munits",m.units,"number")}</div>${button("حفظ الخامة","savemat",true)} ${button("إلغاء","cancel")}</div>`}
+
+function services(){return `<div class="card"><div class="row"><h2>الخدمات والتسعير</h2>${button("+ إضافة خدمة","newservice",true)}</div>${db.services.map(s=>`<div class="item"><strong>${s.name}</strong><p class="small">التكلفة المقدرة: ${money(total(s))} ج.م</p><p>السعر: ${money(s.price)} ج.م | المتبقي: ${money(s.price-total(s))} ج.م</p>${button("تعديل الخدمة","editservice:"+s.id)}</div>`).join("")}</div>
+
+${editing?serviceForm():""}`}
+
+function serviceForm(){let s=editing==="newservice"?{name:"",price:0,tools:[],materials:[]}:db.services.find(x=>x.id===editing);if(!s)return "";return `<div class="card"><h2>بيانات الخدمة</h2>${field("اسم الخدمة","sname",s.name)}${field("سعر الخدمة بالجنيه","sprice",s.price,"number")}${button("حفظ بيانات الخدمة","saveservice",true)}
+
+<h3>إضافة أداة أو طقم</h3><div class="grid"><label>الأداة<select id="stool">${db.tools.map(t=>`<option value="${t.id}">${t.name}</option>`).join("")}</select></label>${field("الكمية","stqty",1,"number")}</div>${button("إضافة الأداة للخدمة","addtool")}
+
+<h3>الأدوات المستخدمة</h3>${s.tools.map((x,i)=>`<div class="item">${getTool(x.id)?.name||"أداة"} — الكمية ${x.qty} ${button("إزالة","remtool:"+i)}</div>`).join("")}
+
+<h3>إضافة خامة</h3><div class="grid"><label>الخامة<select id="smat">${db.materials.map(m=>`<option value="${m.id}">${m.name}</option>`).join("")}</select></label>${field("الكمية المستخدمة","smqty",1,"number")}</div>${button("إضافة الخامة للخدمة","addmat")}
+
+<h3>الخامات المستخدمة</h3>${s.materials.map((x,i)=>`<div class="item">${getMat(x.id)?.name||"خامة"} — الكمية ${x.qty} ${button("إزالة","remmat:"+i)}</div>`).join("")}
+
+<p>تكلفة الخامات: ${money(matCost(s))} ج.م</p><p>تكلفة الأدوات والتعقيم: ${money(toolCost(s))} ج.م</p><p>التكلفة الكلية التقديرية: <strong>${money(total(s))} ج.م</strong></p></div>`}
+
+function expenses(){return `<div class="card"><h2>المصروفات الشهرية</h2>${db.expenses.map((e,i)=>`<div class="grid item">${field("اسم المصروف","ename"+i,e.name)}${field("المبلغ بالجنيه","eamount"+i,e.amount,"number")}${button("حذف","delexp:"+i)}</div>`).join("")}${button("+ إضافة مصروف","newexp")} ${button("حفظ المصروفات","saveexp",true)}</div>`}
+
+function backup(){return `<div class="card"><h2>النسخ الاحتياطي</h2><p>نزّل ملف JSON واحتفظ به في تطبيق Files أو iCloud Drive.</p>${button("تنزيل نسخة احتياطية","export",true)}<label style="margin-top:15px">استرجاع نسخة سابقة<input type="file" id="importfile" accept=".json,application/json"></label><p class="small">استرجاع نسخة سيستبدل البيانات الحالية.</p><div id="msg" class="small"></div></div>`}
+
+function render(){save();nav();$("app").innerHTML=page==="home"?home():page==="tools"?tools():page==="materials"?materials():page==="services"?services():page==="expenses"?expenses():backup()}
+
+$("nav").addEventListener("click",e=>{let b=e.target.closest("[data-page]");if(!b)return;page=b.dataset.page;editing=null;render()});
+
+$("app").addEventListener("click",e=>{let b=e.target.closest("[data-act]");if(!b)return;let a=b.dataset.act;
+
+if(a==="settings"){db.visits=Math.max(1,num($("visits").value));db.cycleCost=Math.max(0,num($("cycle").value));db.cycleCapacity=Math.max(1,num($("capacity").value));render()}
+
+else if(a==="newtool"){editing="new";render()}else if(a.startsWith("edittool:")){editing=a.slice(9);render()}else if(a==="savetool"){let t=editing==="new"?{id:uid(),uses:0}:getTool(editing);t.name=$("tname").value.trim();t.price=Math.max(0,num($("tprice").value));t.life=Math.max(1,num($("tlife").value));if(!t.name){alert("اكتب اسم الأداة");return}if(editing==="new")db.tools.push(t);editing=null;render()}else if(a.startsWith("use:")){let t=getTool(a.slice(4));if(t)t.uses=num(t.uses)+1;render()}else if(a.startsWith("deltool:")){db.tools=db.tools.filter(t=>t.id!==a.slice(8));db.services.forEach(s=>s.tools=s.tools.filter(x=>x.id!==a.slice(8)));render()}
+
+else if(a==="newmat"){editing="newmat";render()}else if(a.startsWith("editmat:")){editing=a.slice(8);render()}else if(a==="savemat"){let m=editing==="newmat"?{id:uid()}:getMat(editing);m.name=$("mname").value.trim();m.price=Math.max(0,num($("mprice").value));m.units=Math.max(.0001,num($("munits").value));if(!m.name){alert("اكتب اسم الخامة");return}if(editing==="newmat")db.materials.push(m);editing=null;render()}else if(a.startsWith("delmat:")){db.materials=db.materials.filter(m=>m.id!==a.slice(7));db.services.forEach(s=>s.materials=s.materials.filter(x=>x.id!==a.slice(7)));render()}
+
+else if(a==="newservice"){editing="newservice";render()}else if(a.startsWith("editservice:")){editing=a.slice(12);render()}else if(a==="saveservice"){let s=editing==="newservice"?{id:uid(),tools:[],materials:[]}:db.services.find(x=>x.id===editing);s.name=$("sname").value.trim();s.price=Math.max(0,num($("sprice").value));if(!s.name){alert("اكتب اسم الخدمة");return}if(editing==="newservice")db.services.push(s);editing=s.id;render()}else if(a==="addtool"||a==="addmat"){if(editing==="newservice"){alert("احفظ الخدمة أولًا ثم أضف الأدوات والخامات");return}let s=db.services.find(x=>x.id===editing);if(a==="addtool"){let id=$("stool").value,q=Math.max(0,num($("stqty").value));if(id&&q)s.tools.push({id,qty:q})}else{let id=$("smat").value,q=Math.max(0,num($("smqty").value));if(id&&q)s.materials.push({id,qty:q})}render()}else if(a.startsWith("remtool:")){db.services.find(x=>x.id===editing).tools.splice(num(a.slice(8)),1);render()}else if(a.startsWith("remmat:")){db.services.find(x=>x.id===editing).materials.splice(num(a.slice(7)),1);render()}
+
+else if(a==="newexp"){db.expenses.push({name:"مصروف جديد",amount:0});render()}else if(a.startsWith("delexp:")){db.expenses.splice(num(a.slice(7)),1);render()}else if(a==="saveexp"){db.expenses.forEach((x,i)=>{x.name=$("ename"+i).value;x.amount=Math.max(0,num($("eamount"+i).value))});render()}
+
+else if(a==="export"){let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="dental-clinic-backup.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}else if(a==="cancel"){editing=null;render()}
+
+});
+
+$("app").addEventListener("change",e=>{if(e.target.id!=="importfile")return;let f=e.target.files&&e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{let x=JSON.parse(rd.result);if(!x.tools||!x.materials||!x.services)throw Error();db=x;if(!db.tools.some(t=>t.name.startsWith("Diagnostic Kit")))db.tools.unshift({id:uid(),name:"Diagnostic Kit (Tweezer + Probe + Mirror)",price:0,life:1000,uses:0});render();$("msg").textContent="تم استرجاع النسخة."}catch(err){$("msg").textContent="الملف غير صالح."}};rd.readAsText(f)});
+
+render();
+
+</script>
+
+</body>
+
+</html>
