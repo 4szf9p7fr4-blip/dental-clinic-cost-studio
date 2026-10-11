@@ -777,6 +777,182 @@ function renderAccounts() {
   }
 }
 
+function calculateService(values) {
+  const cost =
+    Number(values.materials || 0) +
+    Number(values.lab || 0) +
+    Number(values.sterilization || 0) +
+    Number(values.fixed || 0);
+
+  const price = Number(values.price || 0);
+  const profit = price - cost;
+  const margin = price > 0 ? (profit / price) * 100 : 0;
+  const target = Number(data.targetMargin ?? 20);
+  const recommended = target < 100 ? cost / (1 - target / 100) : 0;
+
+  return { cost, price, profit, margin, recommended, target };
+}
+
+function renderServiceResults() {
+  const values = {
+    materials: document.getElementById("sMaterials").value,
+    lab: document.getElementById("sLab").value,
+    sterilization: document.getElementById("sSterilization").value,
+    fixed: document.getElementById("sFixed").value,
+    price: document.getElementById("sPrice").value
+  };
+
+  const result = calculateService(values);
+
+  document.getElementById("serviceCost").textContent = money(result.cost);
+  document.getElementById("serviceProfit").textContent = money(result.profit);
+  document.getElementById("serviceMargin").textContent =
+    Number(result.margin).toFixed(1) + "%";
+  document.getElementById("recommendedPrice").textContent =
+    money(result.recommended);
+
+  const warning = document.getElementById("serviceWarning");
+
+  if (result.price <= 0) {
+    warning.className = "notice";
+    warning.textContent = "أدخل سعر البيع لحساب هامش الربح.";
+  } else if (result.margin < 0) {
+    warning.className = "notice";
+    warning.style.color = "var(--danger)";
+    warning.textContent =
+      "تحذير: سعر البيع أقل من التكلفة، والخدمة تحقق خسارة.";
+  } else if (result.margin < result.target) {
+    warning.className = "notice";
+    warning.style.color = "var(--danger)";
+    warning.textContent =
+      "تحذير: هامش الربح " + result.margin.toFixed(1) +
+      "% أقل من الهدف " + result.target +
+      "%. السعر المقترح لتحقيق الهدف: " + money(result.recommended);
+  } else {
+    warning.className = "notice";
+    warning.style.color = "var(--success)";
+    warning.textContent =
+      "هامش الربح مناسب. الهامش الحالي " +
+      result.margin.toFixed(1) + "% والهدف " +
+      result.target + "%.";
+  }
+}
+
+function renderServicesTable() {
+  const body = document.getElementById("servicesTable");
+
+  if (!data.services.length) {
+    body.innerHTML =
+      '<tr><td colspan="7" class="empty">لم يتم حفظ خدمات بعد</td></tr>';
+    return;
+  }
+
+  body.innerHTML = data.services.map(service => {
+    const result = calculateService(service);
+    const marginClass =
+      result.margin < result.target ? "danger" : "success";
+
+    return `
+      <tr>
+        <td>${escapeHtml(service.name)}</td>
+        <td>${money(result.cost)}</td>
+        <td>${money(result.price)}</td>
+        <td>${money(result.profit)}</td>
+        <td><span class="tag ${marginClass}">
+          ${result.margin.toFixed(1)}%
+        </span></td>
+        <td>${money(result.recommended)}</td>
+        <td>
+          <button class="btn" data-load-service="${service.id}">تعديل</button>
+          <button class="btn danger" data-delete-service="${service.id}">حذف</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+document.getElementById("serviceForm").addEventListener("input", () => {
+  renderServiceResults();
+});
+
+document.getElementById("serviceForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const name = document.getElementById("sName").value.trim();
+  const price = Number(document.getElementById("sPrice").value);
+
+  if (!name || !Number.isFinite(price) || price <= 0) {
+    alert("اكتب اسم الخدمة وسعر بيع أكبر من صفر.");
+    return;
+  }
+
+  const values = {
+    id: uid(),
+    name,
+    price,
+    materials: Number(document.getElementById("sMaterials").value) || 0,
+    lab: Number(document.getElementById("sLab").value) || 0,
+    sterilization:
+      Number(document.getElementById("sSterilization").value) || 0,
+    fixed: Number(document.getElementById("sFixed").value) || 0
+  };
+
+  const editingId = document.getElementById("serviceForm").dataset.editingId;
+
+  if (editingId) {
+    values.id = editingId;
+    data.services = data.services.map(item =>
+      item.id === editingId ? values : item
+    );
+    delete document.getElementById("serviceForm").dataset.editingId;
+  } else {
+    data.services.push(values);
+  }
+
+  saveData();
+  document.getElementById("serviceForm").reset();
+  renderServiceResults();
+  alert("تم حفظ الخدمة وحساب هامش الربح.");
+});
+
+document.getElementById("resetService").addEventListener("click", () => {
+  delete document.getElementById("serviceForm").dataset.editingId;
+  setTimeout(renderServiceResults, 0);
+});
+
+document.getElementById("servicesTable").addEventListener("click", event => {
+  const editButton = event.target.closest("[data-load-service]");
+  const deleteButton = event.target.closest("[data-delete-service]");
+
+  if (editButton) {
+    const service = data.services.find(
+      item => item.id === editButton.dataset.loadService
+    );
+    if (!service) return;
+
+    document.getElementById("sName").value = service.name;
+    document.getElementById("sPrice").value = service.price;
+    document.getElementById("sMaterials").value = service.materials;
+    document.getElementById("sLab").value = service.lab;
+    document.getElementById("sSterilization").value = service.sterilization;
+    document.getElementById("sFixed").value = service.fixed;
+
+    document.getElementById("serviceForm").dataset.editingId = service.id;
+    renderServiceResults();
+    document.getElementById("serviceForm").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  if (deleteButton && confirm("هل تريد حذف الخدمة؟")) {
+    data.services = data.services.filter(
+      item => item.id !== deleteButton.dataset.deleteService
+    );
+    saveData();
+  }
+});
+
 function renderAll() {
   renderDashboard();
   renderMaterials();
